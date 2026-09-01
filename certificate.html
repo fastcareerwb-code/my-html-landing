@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Verification — Unique Foundation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ledger: #F6F2EA;
+    --paper: #FFFFFF;
+    --ink: #16233D;
+    --ink-soft: #3C4A63;
+    --slate: #6B7280;
+    --gold: #B9852F;
+    --gold-soft: #E8DCC4;
+    --line: #DED4BF;
+    --green-bg: #E7F3EC; --green-fg: #276245; --green-dot:#2F9E64;
+    --amber-bg: #FBF0DE; --amber-fg: #93630F; --amber-dot:#C98A1D;
+    --red-bg: #FBEAE7; --red-fg: #9C3223; --red-dot:#C0392B;
+    --gray-bg: #EEF0F2; --gray-fg: #4B5563; --gray-dot:#8A93A0;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #FFFDF8 0%, var(--ledger) 55%),
+      var(--ledger);
+    font-family:'IBM Plex Sans', sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding: 56px 20px 80px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:600px;
+  }
+
+  /* ---------- Header ---------- */
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:34px;
+  }
+  .seal{
+    width:46px;height:46px;border-radius:50%;
+    background: linear-gradient(155deg, var(--ink) 0%, #223257 100%);
+    color:var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Source Serif 4', serif;
+    font-weight:600; font-size:17px;
+    flex-shrink:0;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 6px 16px rgba(22,35,61,0.18);
+  }
+  .brand-text .org{
+    font-size:13px; color:var(--slate); font-weight:500; margin:0 0 2px;
+  }
+  .brand-text h1{
+    font-family:'Source Serif 4', serif;
+    font-size:26px; font-weight:600; margin:0; color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+
+  .subtitle{
+    color:var(--ink-soft);
+    font-size:15.5px;
+    line-height:1.55;
+    margin:0 0 30px;
+    max-width:46ch;
+  }
+
+  /* ---------- Search ---------- */
+  .search-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:38px;
+  }
+  .search-field{
+    flex:1;
+    position:relative;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    padding:0 6px 0 16px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+  .search-field:focus-within{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(185,133,47,0.15);
+  }
+  .search-field span.label{
+    font-size:11.5px;
+    color:var(--slate);
+    white-space:nowrap;
+    margin-right:8px;
+  }
+  .search-field input{
+    flex:1;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:16px;
+    font-weight:500;
+    color:var(--ink);
+    padding:14px 4px;
+    letter-spacing:0.02em;
+    min-width:0;
+  }
+  .search-field input::placeholder{
+    color:#B7BEC9;
+    font-weight:400;
+  }
+  .clear-btn{
+    border:none;background:transparent;color:var(--slate);
+    cursor:pointer; font-size:18px; line-height:1; padding:8px;
+    border-radius:8px; display:none;
+  }
+  .clear-btn:hover{ background:#F1EEE6; color:var(--ink); }
+  .clear-btn.show{ display:inline-flex; }
+
+  .search-btn{
+    border:none;
+    background:var(--ink);
+    color:#F6F2EA;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding:0 22px;
+    border-radius:12px;
+    cursor:pointer;
+    transition: background .18s ease, transform .12s ease;
+    flex-shrink:0;
+  }
+  .search-btn:hover{ background:#223257; }
+  .search-btn:active{ transform: scale(0.97); }
+  .search-btn:disabled{ opacity:0.55; cursor:default; }
+  .search-btn:focus-visible, .search-field:has(input:focus) { outline:none; }
+  .clear-btn:focus-visible, .search-btn:focus-visible{
+    outline:2px solid var(--gold); outline-offset:2px;
+  }
+
+  /* ---------- Panel area ---------- */
+  .panel{ min-height: 4px; }
+
+  .hint{
+    color:var(--slate);
+    font-size:14px;
+    padding: 6px 2px;
+  }
+
+  /* ---------- Skeleton ---------- */
+  .skeleton-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:28px 26px;
+    animation: fadeIn .25s ease;
+  }
+  .sk-bar{
+    height:12px; border-radius:6px;
+    background: linear-gradient(90deg, #EDE9DF 25%, #F6F2E9 37%, #EDE9DF 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.3s ease-in-out infinite;
+    margin-bottom:14px;
+  }
+  @keyframes shimmer{ 0%{background-position:100% 0;} 100%{background-position:0 0;} }
+
+  /* ---------- Error ---------- */
+  .error-alert{
+    background:var(--red-bg);
+    border:1px solid #E9C4BB;
+    color:var(--red-fg);
+    border-radius:14px;
+    padding:16px 18px;
+    font-size:14.5px;
+    line-height:1.5;
+    animation: fadeIn .25s ease;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .error-alert svg{ flex-shrink:0; margin-top:2px; }
+
+  /* ---------- Not found ---------- */
+  .empty-state{
+    text-align:left;
+    padding:30px 4px 4px;
+    color:var(--ink-soft);
+    animation: fadeIn .25s ease;
+  }
+  .empty-state .id-echo{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--ink);
+    background:#EFEAE0;
+    padding:2px 7px;
+    border-radius:6px;
+    font-size:14px;
+  }
+  .empty-state h3{
+    font-family:'Source Serif 4', serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .empty-state p{ margin:0; font-size:14.5px; line-height:1.55; }
+
+  /* ---------- Result Card (certificate style) ---------- */
+  .cert{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:32px 30px 28px;
+    position:relative;
+    animation: reveal .38s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 20px 45px -25px rgba(22,35,61,0.35);
+  }
+  .cert::before{
+    content:"";
+    position:absolute; inset:9px;
+    border:1px solid var(--gold-soft);
+    border-radius:12px;
+    pointer-events:none;
+  }
+  .cert-top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:22px;
+  }
+  .cert-id{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--slate);
+    letter-spacing:0.02em;
+  }
+  .cert-id b{ color:var(--ink-soft); font-weight:600; }
+
+  .status-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 12px 5px 10px;
+    border-radius:999px;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .status-pill .dot{ width:7px;height:7px;border-radius:50%; }
+  .status-active{ background:var(--green-bg); color:var(--green-fg); }
+  .status-active .dot{ background:var(--green-dot); }
+  .status-pending{ background:var(--amber-bg); color:var(--amber-fg); }
+  .status-pending .dot{ background:var(--amber-dot); }
+  .status-inactive{ background:var(--red-bg); color:var(--red-fg); }
+  .status-inactive .dot{ background:var(--red-dot); }
+  .status-other{ background:var(--gray-bg); color:var(--gray-fg); }
+  .status-other .dot{ background:var(--gray-dot); }
+
+  .cert-name{
+    font-family:'Source Serif 4', serif;
+    font-size:27px;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 20px;
+    letter-spacing:-0.01em;
+  }
+
+  .cert-field{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    padding:12px 0;
+    border-top:1px solid #EFEAE0;
+  }
+  .cert-field .f-label{
+    font-size:13.5px; color:var(--slate); flex-shrink:0;
+  }
+  .cert-field .f-value{
+    font-size:14.5px; color:var(--ink); font-weight:500; text-align:right;
+  }
+
+  @keyframes reveal{
+    from{ opacity:0; transform: translateY(6px) scale(0.985); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fadeIn{
+    from{ opacity:0; } to{ opacity:1; }
+  }
+
+  footer{
+    margin-top:44px;
+    font-size:12.5px;
+    color:#9CA3AF;
+    text-align:left;
+  }
+
+  @media (max-width: 480px){
+    body{ padding: 40px 16px 60px; }
+    .brand-text h1{ font-size:22px; }
+    .search-row{ flex-direction:column; }
+    .search-btn{ padding:13px 22px; }
+    .cert-name{ font-size:23px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="brand">
+    <div class="seal">UF</div>
+    <div class="brand-text">
+      <p class="org">Unique Foundation</p>
+      <h1>Student Verification</h1>
+    </div>
+  </div>
+
+  <p class="subtitle">Enter a student ID to check enrolment status, course, and current standing on record.</p>
+
+  <div class="search-row">
+    <div class="search-field">
+      <span class="label">ID</span>
+      <input id="sid-input" type="text" inputmode="numeric" placeholder="e.g. 2223101" autocomplete="off" />
+      <button class="clear-btn" id="clear-btn" aria-label="Clear">&times;</button>
+    </div>
+    <button class="search-btn" id="search-btn">Search</button>
+  </div>
+
+  <div class="panel" id="panel">
+    <p class="hint">Records are pulled live from the registry sheet.</p>
+  </div>
+
+  <footer>Data reflects the most recent registry update. Contact the office if a record looks incorrect.</footer>
+</div>
+
+<script>
+  const SHEET_ID = "1FXBwUuHfRbnUn51e46HsM2yLJ1BKCHRQirzoJvWuvZc";
+  const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+  const input = document.getElementById('sid-input');
+  const clearBtn = document.getElementById('clear-btn');
+  const searchBtn = document.getElementById('search-btn');
+  const panel = document.getElementById('panel');
+
+  let cachedRows = null; // parsed once, reused across searches
+
+  input.addEventListener('input', () => {
+    clearBtn.classList.toggle('show', input.value.length > 0);
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    clearBtn.classList.remove('show');
+    input.focus();
+    resetPanel();
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleSearch();
+  });
+  searchBtn.addEventListener('click', handleSearch);
+
+  function resetPanel(){
+    panel.innerHTML = `<p class="hint">Records are pulled live from the registry sheet.</p>`;
+  }
+
+  // Minimal RFC4180-ish CSV parser (handles quoted fields with commas/quotes)
+  function parseCSV(text){
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++){
+      const c = text[i];
+      if (inQuotes){
+        if (c === '"'){
+          if (text[i+1] === '"'){ field += '"'; i++; }
+          else inQuotes = false;
+        } else field += c;
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ','){ row.push(field); field = ''; }
+        else if (c === '\n'){ row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c === '\r'){ /* skip */ }
+        else field += c;
+      }
+    }
+    if (field.length || row.length){ row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  async function loadSheet(){
+    const res = await fetch(CSV_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Network response was not ok');
+    const text = await res.text();
+    const rows = parseCSV(text).filter(r => r.length && r.some(c => c.trim() !== ''));
+    // drop header row
+    const [, ...dataRows] = rows;
+    return dataRows.map(r => ({
+      id: (r[0] || '').trim(),
+      name: (r[1] || '').trim(),
+      course: (r[2] || '').trim(),
+      status: (r[3] || '').trim(),
+    }));
+  }
+
+  function statusClass(status){
+    const s = status.toLowerCase();
+    if (s.includes('active') || s.includes('pass')) return 'status-active';
+    if (s.includes('pending')) return 'status-pending';
+    if (s.includes('inactive') || s.includes('fail')) return 'status-inactive';
+    return 'status-other';
+  }
+
+  function renderSkeleton(){
+    panel.innerHTML = `
+      <div class="skeleton-card">
+        <div class="sk-bar" style="width:40%;"></div>
+        <div class="sk-bar" style="width:65%; height:20px; margin-bottom:22px;"></div>
+        <div class="sk-bar" style="width:100%;"></div>
+        <div class="sk-bar" style="width:100%;"></div>
+        <div class="sk-bar" style="width:70%;"></div>
+      </div>`;
+  }
+
+  function renderError(){
+    panel.innerHTML = `
+      <div class="error-alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>We can't reach the registry right now. Check your connection and try again in a moment.</div>
+      </div>`;
+  }
+
+  function renderNotFound(id){
+    panel.innerHTML = `
+      <div class="empty-state">
+        <h3>No record found</h3>
+        <p>There's no student on file matching ID <span class="id-echo">${escapeHtml(id)}</span>. Check the number and try again.</p>
+      </div>`;
+  }
+
+  function renderResult(student){
+    const cls = statusClass(student.status);
+    panel.innerHTML = `
+      <div class="cert">
+        <div class="cert-top">
+          <div class="cert-id">Ledger No. <b>${escapeHtml(student.id)}</b></div>
+          <span class="status-pill ${cls}"><span class="dot"></span>${escapeHtml(student.status || 'Unknown')}</span>
+        </div>
+        <h2 class="cert-name">${escapeHtml(student.name || 'Unnamed record')}</h2>
+        <div class="cert-field">
+          <span class="f-label">Course</span>
+          <span class="f-value">${escapeHtml(student.course || '—')}</span>
+        </div>
+        <div class="cert-field">
+          <span class="f-label">Status</span>
+          <span class="f-value">${escapeHtml(student.status || '—')}</span>
+        </div>
+      </div>`;
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  async function handleSearch(){
+    const raw = input.value.trim();
+    if (!raw){
+      input.focus();
+      return;
+    }
+    searchBtn.disabled = true;
+    renderSkeleton();
+    try{
+      if (!cachedRows){
+        cachedRows = await loadSheet();
+      }
+      const match = cachedRows.find(r => {
+        if (!r.id) return false;
+        if (r.id === raw) return true;
+        const a = Number(r.id), b = Number(raw);
+        return !Number.isNaN(a) && !Number.isNaN(b) && a === b;
+      });
+      if (match) renderResult(match);
+      else renderNotFound(raw);
+    } catch (err){
+      cachedRows = null; // allow retry to refetch
+      renderError();
+    } finally {
+      searchBtn.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
