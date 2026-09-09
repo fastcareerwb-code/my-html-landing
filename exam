@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unique Foundation — Mock Test Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Tiro+Bangla&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0d2b4e;
+    --navy-deep:#081a33;
+    --steel:#1f4d7a;
+    --paper:#f3f1e9;
+    --paper-2:#ebe7da;
+    --line:#c9c2ac;
+    --saffron:#c9600c;
+    --saffron-deep:#a34e09;
+    --green:#1c6b3f;
+    --green-bg:#e4f1e8;
+    --red:#a3271f;
+    --red-bg:#faeae8;
+    --ink:#1c1a15;
+    --ink-soft:#57534a;
+    --gold:#8a6a1f;
+    --purple:#5b3a7a;
+    --white:#fffdf8;
+    --radius:2px;
+    --shadow: 0 1px 2px rgba(13,43,78,.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bn{ font-family:'Noto Sans Bengali','IBM Plex Sans', sans-serif; }
+  .bn-serif{ font-family:'Tiro Bangla','Noto Sans Bengali', serif; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  ::selection{background:#d8c98f;}
+
+  /* ---------- Top ribbon ---------- */
+  .ribbon{
+    height:6px;
+    background:linear-gradient(90deg, var(--saffron) 0 33%, var(--white) 33% 66%, var(--green) 66% 100%);
+  }
+  .masthead{
+    background:var(--navy);
+    color:var(--white);
+    border-bottom:3px solid var(--saffron-deep);
+  }
+  .masthead-inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:14px 24px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .seal{
+    width:46px; height:46px; border-radius:50%;
+    border:2px solid #d9c98a;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, #1a4a7d, #081a33);
+    flex:0 0 auto;
+  }
+  .seal svg{ width:26px; height:26px; }
+  .masthead-titles{ line-height:1.25; }
+  .masthead-titles .t1{ font-size:11.5px; letter-spacing:.4px; color:#cfe0f0; }
+  .masthead-titles .t2{ font-size:19px; font-weight:600; font-family:'IBM Plex Sans'; }
+  .masthead-titles .t2 .bn{ font-size:19px; }
+  .masthead-right{ margin-left:auto; text-align:right; font-size:12px; color:#b9cee4; }
+  .masthead-right .mono{ color:#e7edf3; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:28px 24px 60px; }
+
+  /* ---------- Cards / panels shared ---------- */
+  .panel{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  .panel-head{
+    background:var(--paper-2);
+    border-bottom:1px solid var(--line);
+    padding:12px 20px;
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--navy);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+
+  /* ================= LOGIN SCREEN ================= */
+  #screen-login{ display:flex; justify-content:center; padding-top:12px; }
+  .login-card{ width:100%; max-width:560px; }
+  .login-banner{
+    background:var(--navy-deep);
+    color:#fff;
+    padding:20px 26px;
+    border-bottom:3px solid var(--saffron);
+  }
+  .login-banner h1{ margin:0 0 4px; font-size:20px; font-weight:600; }
+  .login-banner p{ margin:0; font-size:13px; color:#c7d6e5; line-height:1.5; }
+  .login-body{ padding:26px 28px 30px; }
+  .field{ margin-bottom:18px; }
+  .field label{
+    display:block; font-size:12.5px; font-weight:600; color:var(--navy);
+    margin-bottom:6px; letter-spacing:.2px;
+  }
+  .field .hint{ font-weight:400; color:var(--ink-soft); font-size:11.5px; margin-left:6px; }
+  .field input, .field select{
+    width:100%;
+    border:1px solid #b7b09a;
+    background:#fffef9;
+    padding:10px 12px;
+    font-size:14.5px;
+    font-family:inherit;
+    border-radius:var(--radius);
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus{
+    outline:2px solid var(--steel);
+    outline-offset:1px;
+    border-color:var(--steel);
+  }
+  .roll-line{
+    display:flex; gap:10px; align-items:center; background:var(--paper-2);
+    border:1px dashed var(--line); padding:10px 14px; font-size:12.5px; color:var(--ink-soft);
+    margin-bottom:20px; border-radius:var(--radius);
+  }
+  .roll-line .mono{ color:var(--navy); font-weight:600; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:11px 22px; font-size:14px; font-weight:600;
+    border-radius:var(--radius); border:1px solid transparent;
+    transition:filter .12s ease;
+  }
+  .btn:hover{ filter:brightness(1.06); }
+  .btn:active{ filter:brightness(.96); }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:disabled{ background:#9aa7b3; cursor:not-allowed; filter:none; }
+  .btn-saffron{ background:var(--saffron); color:#fff; }
+  .btn-outline{ background:transparent; border-color:var(--navy); color:var(--navy); }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); border-color:var(--line); }
+  .btn-block{ width:100%; }
+  .login-foot{ text-align:center; margin-top:16px; font-size:11.5px; color:var(--ink-soft); }
+
+  /* ================= INSTRUCTIONS SCREEN ================= */
+  .instr-grid{ display:grid; grid-template-columns:1fr 300px; gap:20px; }
+  @media (max-width:820px){ .instr-grid{ grid-template-columns:1fr; } }
+  .instr-body{ padding:20px 24px; }
+  .instr-body h3{ font-size:14px; color:var(--navy); margin:20px 0 8px; }
+  .instr-body h3:first-child{ margin-top:0; }
+  .instr-body ul{ margin:0; padding-left:20px; font-size:13.5px; line-height:1.75; color:#2c2a24;}
+  .instr-body li{ margin-bottom:4px; }
+  .scheme-table{ width:100%; border-collapse:collapse; font-size:13.5px; margin:6px 0 4px; }
+  .scheme-table td, .scheme-table th{ border:1px solid var(--line); padding:7px 10px; text-align:left; }
+  .scheme-table th{ background:var(--paper-2); color:var(--navy); }
+  .candidate-box{ padding:20px; }
+  .candidate-box .row{ display:flex; justify-content:space-between; font-size:13px; padding:7px 0; border-bottom:1px dashed var(--line); }
+  .candidate-box .row:last-child{ border-bottom:none; }
+  .candidate-box .row span:first-child{ color:var(--ink-soft); }
+  .candidate-box .row span:last-child{ font-weight:600; color:var(--navy); text-align:right; }
+  .declare{
+    display:flex; gap:10px; align-items:flex-start; background:var(--paper-2);
+    border:1px solid var(--line); padding:14px 16px; margin:20px 24px 0; font-size:13px;
+    border-radius:var(--radius);
+  }
+  .declare input{ margin-top:3px; }
+  .instr-actions{ display:flex; justify-content:flex-end; gap:12px; padding:18px 24px 24px; }
+
+  /* ================= EXAM SCREEN ================= */
+  #screen-exam .wrap{ padding-top:0; }
+  .exam-topbar{
+    background:var(--navy); color:#fff; padding:10px 24px;
+    display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+    border-bottom:3px solid var(--saffron-deep);
+  }
+  .exam-topbar .cand{ font-size:13px; }
+  .exam-topbar .cand b{ font-weight:600; }
+  .exam-topbar .cand .desig{ color:#bcd0e3; }
+  .timer-box{
+    margin-left:auto; display:flex; align-items:center; gap:10px;
+    background:var(--navy-deep); border:1px solid #2a4d70; padding:6px 14px; border-radius:var(--radius);
+  }
+  .timer-box .lbl{ font-size:11px; color:#a9c1d7; letter-spacing:.3px; }
+  .timer-box .clock{ font-size:18px; font-weight:600; font-family:'IBM Plex Mono'; letter-spacing:1px; }
+  .timer-box.low .clock{ color:#ff9b8a; }
+  .qprogress{ font-size:12.5px; color:#cfe0f0; }
+
+  .exam-grid{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:18px;
+    padding:18px 24px 40px;
+    max-width:1180px; margin:0 auto;
+  }
+  @media (max-width:900px){ .exam-grid{ grid-template-columns:1fr; } }
+
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 20px; background:var(--paper-2); border-bottom:1px solid var(--line);
+  }
+  .qcard-head .qnum{ font-size:13.5px; font-weight:600; color:var(--navy); }
+  .qcard-head .cat{
+    font-size:11px; text-transform:none; background:#fff; border:1px solid var(--line);
+    padding:3px 10px; border-radius:20px; color:var(--ink-soft);
+  }
+  .mark-btn{
+    display:flex; align-items:center; gap:6px; font-size:12px; color:var(--purple); background:none; border:none; font-weight:600;
+  }
+  .mark-btn input{ accent-color:var(--purple); }
+
+  .qcard-body{ padding:22px 24px 26px; }
+  .qtext{ font-size:17px; line-height:1.75; color:var(--ink); margin-bottom:20px; }
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .opt{
+    display:flex; align-items:flex-start; gap:12px;
+    border:1px solid var(--line); padding:12px 14px; border-radius:var(--radius);
+    background:#fffef9; font-size:15px; line-height:1.6;
+    transition:border-color .1s, background .1s;
+  }
+  .opt:hover{ border-color:var(--steel); background:#f6f9fc; }
+  .opt.selected{ border-color:var(--navy); background:#eaf1f8; }
+  .opt input{ margin-top:3px; accent-color:var(--navy); flex:0 0 auto; }
+  .opt .tag{ font-weight:700; color:var(--navy); flex:0 0 auto; }
+
+  .qcard-actions{
+    display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+    padding:16px 24px; border-top:1px solid var(--line); background:var(--paper-2);
+  }
+  .qcard-actions .left, .qcard-actions .right{ display:flex; gap:10px; flex-wrap:wrap; }
+  .btn-small{ padding:8px 16px; font-size:13px; }
+
+  /* palette */
+  .palette-legend{ padding:14px 18px; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; font-size:11.5px; }
+  .legend-item{ display:flex; align-items:center; gap:7px; color:var(--ink-soft); }
+  .dot{ width:12px; height:12px; border-radius:3px; flex:0 0 auto; border:1px solid rgba(0,0,0,.15);}
+  .dot.notvisited{ background:#e4e0d2; }
+  .dot.notanswered{ background:#d9564d; }
+  .dot.answered{ background:#2f8f5b; }
+  .dot.marked{ background:var(--purple); }
+  .dot.markedans{ background:var(--purple); position:relative; }
+
+  .pal-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; padding:16px 18px 20px; }
+  .pal-btn{
+    aspect-ratio:1/1; border:1px solid rgba(0,0,0,.15); border-radius:4px;
+    font-size:13px; font-weight:600; color:#3a3527; background:#e4e0d2;
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .pal-btn.current{ outline:2px solid var(--navy); outline-offset:1px; }
+  .pal-btn.answered{ background:#2f8f5b; color:#fff; }
+  .pal-btn.notanswered{ background:#d9564d; color:#fff; }
+  .pal-btn.marked{ background:var(--purple); color:#fff; }
+  .pal-btn.markedans::after{
+    content:''; position:absolute; bottom:2px; right:2px; width:6px; height:6px; background:#2f8f5b; border-radius:50%; border:1px solid #fff;
+  }
+  .summary-mini{ padding:14px 18px; font-size:12px; color:var(--ink-soft); border-top:1px solid var(--line);}
+  .summary-mini .row{ display:flex; justify-content:space-between; padding:3px 0; }
+
+  .submit-box{ padding:16px 18px; }
+
+  /* ================= RESULT SCREEN ================= */
+  .result-header{
+    background:var(--navy-deep); color:#fff; padding:26px 30px; border-bottom:3px solid var(--saffron);
+    display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .result-header h1{ margin:0 0 6px; font-size:21px; }
+  .result-header p{ margin:0; color:#c7d6e5; font-size:13px; }
+  .result-header .stamp{
+    border:2px solid #d9c98a; color:#e8dcb0; padding:6px 14px; font-size:12px; letter-spacing:1px;
+    transform:rotate(-4deg); border-radius:3px; font-weight:600;
+  }
+
+  .score-strip{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+    border:1px solid var(--line); margin:0;
+  }
+  @media (max-width:760px){ .score-strip{ grid-template-columns:repeat(2,1fr); } }
+  .score-cell{ background:#fff; padding:20px 16px; text-align:center; }
+  .score-cell .num{ font-size:28px; font-weight:700; font-family:'IBM Plex Mono'; }
+  .score-cell .lbl{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; letter-spacing:.2px; }
+  .score-cell.green .num{ color:var(--green); }
+  .score-cell.red .num{ color:var(--red); }
+  .score-cell.gold .num{ color:var(--gold); }
+  .score-cell.navy .num{ color:var(--navy); }
+
+  .result-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:20px; margin-top:20px; }
+  @media (max-width:900px){ .result-grid{ grid-template-columns:1fr; } }
+
+  .cat-row{ padding:14px 20px; border-bottom:1px solid var(--line); }
+  .cat-row:last-child{ border-bottom:none; }
+  .cat-row .head{ display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:8px; }
+  .cat-row .head b{ color:var(--navy); }
+  .cat-row .head .stat{ font-size:12px; color:var(--ink-soft); }
+  .bar-track{ height:9px; background:var(--paper-2); border-radius:6px; overflow:hidden; border:1px solid var(--line); }
+  .bar-fill{ height:100%; background:var(--green); }
+  .bar-fill.mid{ background:var(--gold); }
+  .bar-fill.low{ background:var(--red); }
+
+  .advice-card{ padding:18px 20px; }
+  .advice-item{
+    border-left:3px solid var(--saffron); background:var(--paper-2); padding:12px 16px; margin-bottom:12px; border-radius:0 3px 3px 0;
+  }
+  .advice-item:last-child{ margin-bottom:0; }
+  .advice-item h4{ margin:0 0 5px; font-size:13.5px; color:var(--navy); }
+  .advice-item p{ margin:0; font-size:13px; line-height:1.6; color:#2c2a24; }
+  .advice-item.strong{ border-left-color:var(--green); }
+
+  .review-toggle{ text-align:center; margin:26px 0 10px; }
+  .review-list{ display:none; margin-top:10px; }
+  .review-list.show{ display:block; }
+  .review-item{ border-bottom:1px solid var(--line); padding:16px 20px; }
+  .review-item:last-child{ border-bottom:none; }
+  .review-item .rq{ font-size:14.5px; margin-bottom:10px; }
+  .review-item .ropt{ font-size:13px; padding:6px 10px; border-radius:3px; margin-bottom:4px; }
+  .review-item .ropt.correct{ background:var(--green-bg); color:var(--green); font-weight:600; }
+  .review-item .ropt.wrong{ background:var(--red-bg); color:var(--red); font-weight:600; }
+  .review-item .ropt.skip{ background:#fff8e8; color:var(--gold); font-weight:600; }
+  .badge-status{ font-size:11px; padding:2px 8px; border-radius:10px; font-weight:600; margin-left:8px; }
+  .badge-status.correct{ background:var(--green-bg); color:var(--green); }
+  .badge-status.wrong{ background:var(--red-bg); color:var(--red); }
+  .badge-status.skip{ background:#fff8e8; color:var(--gold); }
+
+  .final-actions{ display:flex; justify-content:center; gap:14px; margin-top:26px; }
+
+  .hidden{ display:none !important; }
+  .footer-note{ text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:30px; line-height:1.6; }
+</style>
+</head>
+<body>
+
+<div class="ribbon"></div>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="seal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e9dfab" stroke-width="1.4">
+        <circle cx="12" cy="12" r="9.2"/>
+        <path d="M12 6.2v11.6M6.2 12h11.6" stroke-width="1"/>
+        <circle cx="12" cy="12" r="3.1"/>
+      </svg>
+    </div>
+    <div class="masthead-titles">
+      <div class="t1">MOCK COMPETITIVE EXAMINATION PORTAL</div>
+      <div class="t2"><span class="bn">ইউনিক ফাউন্ডেশন</span> · Unique Foundation</div>
+    </div>
+    <div class="masthead-right">
+      <div>Exam Code: <span class="mono" id="examCodeTop">UF/GK/2026-081</span></div>
+      <div id="dateTop"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= SCREEN 1: LOGIN ================= -->
+<main id="screen-login">
+  <div class="wrap" style="padding-top:36px;">
+    <div class="login-card panel">
+      <div class="login-banner">
+        <h1>Candidate Registration</h1>
+        <p class="bn-serif">পরীক্ষা শুরু করার আগে অনুগ্রহ করে আপনার তথ্য সঠিকভাবে পূরণ করুন। এই তথ্য আপনার ফলাফলে ব্যবহৃত হবে।</p>
+      </div>
+      <div class="login-body">
+        <div class="roll-line">
+          <span>Auto-generated Roll No.</span>
+          <span class="mono" id="rollNo">—</span>
+        </div>
+
+        <div class="field">
+          <label>Full Name <span class="hint">/ পুরো নাম</span></label>
+          <input type="text" id="inpName" placeholder="যেমন — সৌমিত্র রায়" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>Designation / Category <span class="hint">/ পদ বা বিভাগ যার জন্য প্রস্তুতি নিচ্ছেন</span></label>
+          <select id="inpDesigSelect">
+            <option value="">— নির্বাচন করুন / Select —</option>
+            <option value="SSC CGL প্রার্থী">SSC CGL প্রার্থী</option>
+            <option value="SSC CHSL প্রার্থী">SSC CHSL প্রার্থী</option>
+            <option value="WBPSC Clerkship প্রার্থী">WBPSC Clerkship প্রার্থী</option>
+            <option value="WB Police Constable প্রার্থী">WB Police Constable প্রার্থী</option>
+            <option value="Group-D প্রার্থী">Group-D প্রার্থী</option>
+            <option value="উচ্চ মাধ্যমিক ছাত্র/ছাত্রী">উচ্চ মাধ্যমিক ছাত্র/ছাত্রী</option>
+            <option value="__other">অন্যান্য (লিখুন)</option>
+          </select>
+        </div>
+        <div class="field hidden" id="desigOtherWrap">
+          <label>Please specify <span class="hint">/ উল্লেখ করুন</span></label>
+          <input type="text" id="inpDesigOther" placeholder="আপনার পদ বা বিভাগ লিখুন">
+        </div>
+
+        <button class="btn btn-primary btn-block" id="btnGoInstructions" disabled>Proceed to Instructions →</button>
+        <div class="login-foot">By proceeding you agree this is a practice mock test, not an official government examination.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ================= SCREEN 2: INSTRUCTIONS ================= -->
+<main id="screen-instructions" class="hidden">
+  <div class="wrap">
+    <div class="instr-grid">
+      <div class="panel">
+        <div class="panel-head">General Instructions <span class="mono" style="font-weight:400;font-size:11px;color:var(--ink-soft);">সাধারণ নির্দেশাবলী</span></div>
+        <div class="instr-body">
+          <h3>Exam pattern</h3>
+          <table class="scheme-table">
+            <tr><th>Total Questions</th><td id="ins-total">25</td></tr>
+            <tr><th>Total Duration</th><td>20 minutes</td></tr>
+            <tr><th>Marks per correct answer</th><td>+1</td></tr>
+            <tr><th>Negative marking</th><td>−0.25 per wrong answer</td></tr>
+            <tr><th>Subjects covered</th><td>West Bengal GK, Indian History, Polity, Geography, Science, Economy, Computer Awareness</td></tr>
+          </table>
+
+          <h3>Please read before you begin <span class="bn">/ শুরু করার আগে পড়ে নিন</span></h3>
+          <ul class="bn">
+            <li>পরীক্ষা শুরু হওয়ার সাথে সাথেই টাইমার শুরু হবে এবং নির্ধারিত সময় শেষ হলে পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হয়ে যাবে।</li>
+            <li>ডানদিকের প্যানেলে থাকা প্রশ্ন সংখ্যায় ক্লিক করে যেকোনো প্রশ্নে সরাসরি যাওয়া যাবে।</li>
+            <li>প্রতিটি প্রশ্নে একটিমাত্র বিকল্প নির্বাচন করা যাবে। উত্তর পরিবর্তন করতে অন্য বিকল্পে ক্লিক করুন।</li>
+            <li>কোনো প্রশ্ন নিয়ে সন্দেহ থাকলে তা 'Mark for Review' করে রাখতে পারেন এবং পরে ফিরে আসতে পারেন।</li>
+            <li>ভুল উত্তরের জন্য ঋণাত্মক নম্বর (−0.25) কাটা হবে, তাই অনুমাননির্ভর উত্তর দেওয়ার ক্ষেত্রে সতর্ক থাকুন।</li>
+            <li>একবার 'Submit Test' করলে আর কোনো উত্তর পরিবর্তন করা যাবে না।</li>
+          </ul>
+
+          <div class="declare">
+            <input type="checkbox" id="chkDeclare">
+            <label for="chkDeclare" class="bn">আমি উপরের সমস্ত নির্দেশাবলী পড়েছি এবং বুঝেছি, এবং আমি স্বেচ্ছায় এই মক টেস্টে অংশগ্রহণ করতে সম্মত।</label>
+          </div>
+        </div>
+        <div class="instr-actions">
+          <button class="btn btn-ghost" id="btnBackLogin">← Back</button>
+          <button class="btn btn-saffron" id="btnStartExam" disabled>I am ready — Start Test</button>
+        </div>
+      </div>
+
+      <div class="panel candidate-box">
+        <div class="panel-head" style="margin:-20px -20px 14px;">Candidate Details</div>
+        <div class="row"><span>Name</span><span id="ci-name">—</span></div>
+        <div class="row"><span>Designation</span><span id="ci-desig">—</span></div>
+        <div class="row"><span>Roll No.</span><span id="ci-roll" class="mono">—</span></div>
+        <div class="row"><span>Exam</span><span>GK Mock Test</span></div>
+        <div class="row"><span>Duration</span><span>20 min</span></div>
+        <div class="row"><span>Total Marks</span><span id="ins-total2">25</span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ================= SCREEN 3: EXAM ================= -->
+<main id="screen-exam" class="hidden">
+  <div class="exam-topbar">
+    <div class="cand"><b id="ex-name">—</b><br><span class="desig" id="ex-desig">—</span></div>
+    <div class="qprogress" id="ex-progress">Question 1 of 25</div>
+    <div class="timer-box" id="timerBox">
+      <span class="lbl">TIME LEFT</span>
+      <span class="clock" id="clock">20:00</span>
+    </div>
+  </div>
+
+  <div class="exam-grid">
+    <div class="panel" id="qcard">
+      <div class="qcard-head">
+        <span class="qnum" id="q-num">Question 1</span>
+        <span class="cat" id="q-cat">Category</span>
+        <label class="mark-btn"><input type="checkbox" id="q-mark"> Mark for Review</label>
+      </div>
+      <div class="qcard-body">
+        <div class="qtext bn" id="q-text">—</div>
+        <div class="options" id="q-options"></div>
+      </div>
+      <div class="qcard-actions">
+        <div class="left">
+          <button class="btn btn-outline btn-small" id="btnPrev">← Previous</button>
+          <button class="btn btn-ghost btn-small" id="btnClear">Clear Response</button>
+        </div>
+        <div class="right">
+          <button class="btn btn-primary btn-small" id="btnSaveNext">Save &amp; Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-head" style="margin:0;">Question Palette</div>
+        <div class="palette-legend">
+          <div class="legend-item"><span class="dot notvisited"></span>Not visited</div>
+          <div class="legend-item"><span class="dot notanswered"></span>Not answered</div>
+          <div class="legend-item"><span class="dot answered"></span>Answered</div>
+          <div class="legend-item"><span class="dot marked"></span>Marked</div>
+        </div>
+        <div class="pal-grid" id="paletteGrid"></div>
+        <div class="summary-mini">
+          <div class="row"><span>Answered</span><span id="sm-answered">0</span></div>
+          <div class="row"><span>Not answered</span><span id="sm-notanswered">0</span></div>
+          <div class="row"><span>Marked for review</span><span id="sm-marked">0</span></div>
+          <div class="row"><span>Not visited</span><span id="sm-notvisited">25</span></div>
+        </div>
+        <div class="submit-box">
+          <button class="btn btn-saffron btn-block" id="btnSubmitExam">Submit Test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ================= SCREEN 4: RESULT ================= -->
+<main id="screen-result" class="hidden">
+  <div class="result-header">
+    <div>
+      <h1 id="res-title">Result Summary</h1>
+      <p><span id="res-name">—</span> · <span id="res-desig">—</span> · Roll No. <span id="res-roll" class="mono">—</span></p>
+    </div>
+    <div class="stamp">MOCK TEST · UNIQUE FOUNDATION</div>
+  </div>
+
+  <div class="wrap" style="padding-top:0;">
+    <div class="score-strip panel" style="margin-top:20px; border-top:none;">
+      <div class="score-cell navy"><div class="num" id="res-score">0/25</div><div class="lbl">Net Score</div></div>
+      <div class="score-cell green"><div class="num" id="res-correct">0</div><div class="lbl">Correct</div></div>
+      <div class="score-cell red"><div class="num" id="res-wrong">0</div><div class="lbl">Wrong</div></div>
+      <div class="score-cell gold"><div class="num" id="res-skip">0</div><div class="lbl">Unattempted</div></div>
+      <div class="score-cell navy"><div class="num" id="res-time">00:00</div><div class="lbl">Time Spent</div></div>
+    </div>
+
+    <div class="result-grid">
+      <div class="panel">
+        <div class="panel-head">Subject-wise Performance <span style="font-weight:400;font-size:11px;color:var(--ink-soft);">accuracy per topic</span></div>
+        <div id="catBreakdown"></div>
+      </div>
+
+      <div class="panel advice-card">
+        <div class="panel-head" style="margin:-18px -20px 16px;">Where to Focus Next</div>
+        <div id="adviceList"></div>
+      </div>
+    </div>
+
+    <div class="review-toggle">
+      <button class="btn btn-outline" id="btnToggleReview">View Detailed Answer Review ▾</button>
+    </div>
+    <div class="panel review-list" id="reviewList"></div>
+
+    <div class="final-actions">
+      <button class="btn btn-primary" id="btnRetake">Retake Test</button>
+    </div>
+
+    <div class="footer-note">This is a practice mock test generated for preparation purposes by Unique Foundation and is not affiliated with, or an official examination conducted by, any Government body.</div>
+  </div>
+</main>
+
+<script>
+/* =========================================================
+   DATA
+========================================================= */
+const QUESTIONS = [
+  { cat:"WB GK", q:"পশ্চিমবঙ্গের রাজধানী কোনটি?", opts:["হাওড়া","কলকাতা","দুর্গাপুর","শিলিগুড়ি"], ans:1 },
+  { cat:"WB GK", q:"পশ্চিমবঙ্গের রাজ্য প্রাণী কোনটি?", opts:["রয়্যাল বেঙ্গল টাইগার","একশৃঙ্গ গণ্ডার","মেছোবাঘ","হাতি"], ans:2 },
+  { cat:"History", q:"'বন্দে মাতরম্‌' গানটি কে রচনা করেন?", opts:["রবীন্দ্রনাথ ঠাকুর","কাজী নজরুল ইসলাম","বঙ্কিমচন্দ্র চট্টোপাধ্যায়","শরৎচন্দ্র চট্টোপাধ্যায়"], ans:2 },
+  { cat:"Polity", q:"ভারতের সংবিধান কার্যকর হয় কবে?", opts:["১৫ আগস্ট ১৯৪৭","২৬ নভেম্বর ১৯৪৯","২৬ জানুয়ারি ১৯৫০","২ অক্টোবর ১৯৫০"], ans:2 },
+  { cat:"WB GK", q:"পশ্চিমবঙ্গের দীর্ঘতম নদী কোনটি?", opts:["দামোদর","তিস্তা","গঙ্গা","অজয়"], ans:2 },
+  { cat:"Geography", q:"সুন্দরবন কোন ধরনের বন?", opts:["চিরহরিৎ বন","ম্যানগ্রোভ বন","পর্ণমোচী বন","শঙ্কুযুক্ত বন"], ans:1 },
+  { cat:"History", q:"ভারতের প্রথম গভর্নর-জেনারেল কে ছিলেন?", opts:["লর্ড ক্লাইভ","ওয়ারেন হেস্টিংস","লর্ড ক্যানিং","লর্ড মাউন্টব্যাটেন"], ans:1 },
+  { cat:"History", q:"পলাশীর যুদ্ধ সংঘটিত হয় কোন সালে?", opts:["১৭৫৬","১৭৫৭","১৭৬৪","১৭৭২"], ans:1 },
+  { cat:"History", q:"'জন গণ মন'-এর রচয়িতা কে?", opts:["বঙ্কিমচন্দ্র চট্টোপাধ্যায়","কাজী নজরুল ইসলাম","রবীন্দ্রনাথ ঠাকুর","দ্বিজেন্দ্রলাল রায়"], ans:2 },
+  { cat:"Polity", q:"ভারতীয় সংসদের উচ্চ কক্ষের নাম কী?", opts:["লোকসভা","রাজ্যসভা","বিধানসভা","বিধান পরিষদ"], ans:1 },
+  { cat:"Polity", q:"ভারতের মৌলিক অধিকার কোন অংশে বর্ণিত হয়েছে?", opts:["Part I","Part II","Part III","Part IV"], ans:2 },
+  { cat:"Polity", q:"ভারতীয় সংবিধানের 'রক্ষাকর্তা' হিসেবে কোন প্রতিষ্ঠানকে ধরা হয়?", opts:["সংসদ","রাষ্ট্রপতি","সুপ্রিম কোর্ট","নির্বাচন কমিশন"], ans:2 },
+  { cat:"WB GK", q:"দার্জিলিং কোন ফসলের জন্য বিশেষভাবে বিখ্যাত?", opts:["কফি","চা","পাট","তুলা"], ans:1 },
+  { cat:"WB GK", q:"পশ্চিমবঙ্গের সর্বোচ্চ পর্বতশৃঙ্গ কোনটি?", opts:["সান্দাকফু","টাইগার হিল","নন্দাদেবী","হালুট"], ans:0 },
+  { cat:"Economy", q:"ভারতের জাতীয় আয় গণনা করে কোন সংস্থা?", opts:["RBI","NITI Aayog","NSO","SEBI"], ans:2 },
+  { cat:"Science", q:"রক্তে অক্সিজেন পরিবহন করে কোন পদার্থ?", opts:["প্লাজমা","হিমোগ্লোবিন","ইনসুলিন","প্লেটলেট"], ans:1 },
+  { cat:"Science", q:"ভিটামিন C-এর অভাবে কোন রোগ হয়?", opts:["রিকেটস","বেরিবেরি","স্কার্ভি","রাতকানা"], ans:2 },
+  { cat:"Geography", q:"পৃথিবীর বৃহত্তম মহাসাগর কোনটি?", opts:["আটলান্টিক মহাসাগর","ভারত মহাসাগর","আর্কটিক মহাসাগর","প্রশান্ত মহাসাগর"], ans:3 },
+  { cat:"Geography", q:"ভারতের দীর্ঘতম নদী কোনটি?", opts:["যমুনা","গঙ্গা","গোদাবরী","নর্মদা"], ans:1 },
+  { cat:"Economy", q:"ভারতীয় রিজার্ভ ব্যাংক প্রতিষ্ঠিত হয় কোন সালে?", opts:["১৯২৫","১৯৩০","১৯৩৫","১৯৪৭"], ans:2 },
+  { cat:"WB GK", q:"পশ্চিমবঙ্গের প্রথম মুখ্যমন্ত্রী কে ছিলেন?", opts:["বিধানচন্দ্র রায়","প্রফুল্ল ঘোষ","জ্যোতি বসু","সিদ্ধার্থ শঙ্কর রায়"], ans:1 },
+  { cat:"WB GK", q:"'দুর্গাপূজা' কোন রাজ্যের প্রধান উৎসবগুলির মধ্যে অন্যতম?", opts:["গুজরাট","পশ্চিমবঙ্গ","পাঞ্জাব","কেরালা"], ans:1 },
+  { cat:"General Awareness", q:"ভারতের জাতীয় খেলা হিসেবে সরকারিভাবে কোনো খেলাকে ঘোষণা করা হয়েছে কি?", opts:["হকি","ক্রিকেট","ফুটবল","কোনো খেলাই নয়"], ans:3 },
+  { cat:"Computer", q:"কম্পিউটারের CPU-এর পূর্ণরূপ কী?", opts:["Central Processing Unit","Computer Processing Utility","Central Program Unit","Computer Processing Unit"], ans:0 },
+  { cat:"Economy", q:"'সবুজ বিপ্লব'-এর সঙ্গে প্রধানত কোন ফসলের উৎপাদন বৃদ্ধির সম্পর্ক রয়েছে?", opts:["ধান ও গম","চা ও কফি","পাট ও তুলা","আম ও তামাক"], ans:0 },
+];
+
+const CAT_LABELS = {
+  "WB GK":"West Bengal GK", "History":"Indian History", "Polity":"Polity & Constitution",
+  "Geography":"Geography", "Science":"General Science", "Economy":"Economy",
+  "Computer":"Computer Awareness", "General Awareness":"General Awareness"
+};
+
+const TOTAL_Q = QUESTIONS.length;
+const EXAM_SECONDS = 20*60;
+
+/* =========================================================
+   STATE
+========================================================= */
+let candidate = { name:"", desig:"", roll:"" };
+let responses = new Array(TOTAL_Q).fill(null);   // selected option index or null
+let visited   = new Array(TOTAL_Q).fill(false);
+let marked    = new Array(TOTAL_Q).fill(false);
+let timeSpentPerQ = new Array(TOTAL_Q).fill(0);  // ms
+let current = 0;
+let timerId = null;
+let secondsLeft = EXAM_SECONDS;
+let examStartedAt = null, examEndedAt = null;
+let questionEnteredAt = null;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function fmtClock(totalSeconds){
+  const m = Math.floor(totalSeconds/60).toString().padStart(2,'0');
+  const s = Math.floor(totalSeconds%60).toString().padStart(2,'0');
+  return m+":"+s;
+}
+function fmtClockFromMs(ms){
+  return fmtClock(Math.round(ms/1000));
+}
+function genRoll(){
+  const y = new Date().getFullYear().toString().slice(-2);
+  const n = Math.floor(1000+Math.random()*9000);
+  return "UF"+y+"-"+n;
+}
+document.getElementById('rollNo').textContent = (candidate.roll = genRoll());
+document.getElementById('dateTop').textContent = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+
+/* =========================================================
+   SCREEN 1 — LOGIN
+========================================================= */
+const inpName = document.getElementById('inpName');
+const inpDesigSelect = document.getElementById('inpDesigSelect');
+const inpDesigOther = document.getElementById('inpDesigOther');
+const desigOtherWrap = document.getElementById('desigOtherWrap');
+const btnGoInstructions = document.getElementById('btnGoInstructions');
+
+function currentDesig(){
+  if(inpDesigSelect.value === "__other") return inpDesigOther.value.trim();
+  return inpDesigSelect.value;
+}
+function validateLogin(){
+  const nameOk = inpName.value.trim().length >= 2;
+  const desigOk = currentDesig().length >= 2;
+  btnGoInstructions.disabled = !(nameOk && desigOk);
+}
+inpName.addEventListener('input', validateLogin);
+inpDesigOther.addEventListener('input', validateLogin);
+inpDesigSelect.addEventListener('change', ()=>{
+  desigOtherWrap.classList.toggle('hidden', inpDesigSelect.value !== "__other");
+  validateLogin();
+});
+
+btnGoInstructions.addEventListener('click', ()=>{
+  candidate.name = inpName.value.trim();
+  candidate.desig = currentDesig();
+  document.getElementById('ci-name').textContent = candidate.name;
+  document.getElementById('ci-desig').textContent = candidate.desig;
+  document.getElementById('ci-roll').textContent = candidate.roll;
+  document.getElementById('ins-total').textContent = TOTAL_Q;
+  document.getElementById('ins-total2').textContent = TOTAL_Q;
+  show('screen-instructions');
+});
+
+/* =========================================================
+   SCREEN 2 — INSTRUCTIONS
+========================================================= */
+document.getElementById('btnBackLogin').addEventListener('click', ()=> show('screen-login'));
+document.getElementById('chkDeclare').addEventListener('change', (e)=>{
+  document.getElementById('btnStartExam').disabled = !e.target.checked;
+});
+document.getElementById('btnStartExam').addEventListener('click', startExam);
+
+/* =========================================================
+   SCREEN 3 — EXAM
+========================================================= */
+function startExam(){
+  document.getElementById('ex-name').textContent = candidate.name;
+  document.getElementById('ex-desig').textContent = candidate.desig;
+  buildPalette();
+  show('screen-exam');
+  examStartedAt = Date.now();
+  current = 0;
+  enterQuestion(0);
+  secondsLeft = EXAM_SECONDS;
+  updateClock();
+  timerId = setInterval(tick, 1000);
+}
+
+function tick(){
+  secondsLeft--;
+  updateClock();
+  if(secondsLeft <= 0){
+    clearInterval(timerId);
+    finishExam();
+  }
+}
+function updateClock(){
+  const box = document.getElementById('timerBox');
+  document.getElementById('clock').textContent = fmtClock(Math.max(secondsLeft,0));
+  box.classList.toggle('low', secondsLeft <= 120);
+}
+
+function buildPalette(){
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  for(let i=0;i<TOTAL_Q;i++){
+    const b = document.createElement('button');
+    b.className = 'pal-btn';
+    b.textContent = i+1;
+    b.addEventListener('click', ()=> goTo(i));
+    grid.appendChild(b);
+  }
+  refreshPalette();
+}
+
+function refreshPalette(){
+  const grid = document.getElementById('paletteGrid');
+  let ans=0, notans=0, mk=0, nv=0;
+  [...grid.children].forEach((btn, i)=>{
+    btn.classList.remove('current','answered','notanswered','marked','markedans');
+    const isAnswered = responses[i] !== null;
+    const isMarked = marked[i];
+    if(i === current) btn.classList.add('current');
+    if(!visited[i]){ nv++; }
+    else if(isMarked && isAnswered){ btn.classList.add('markedans'); btn.classList.add('marked'); mk++; ans++; }
+    else if(isMarked){ btn.classList.add('marked'); mk++; }
+    else if(isAnswered){ btn.classList.add('answered'); ans++; }
+    else { btn.classList.add('notanswered'); notans++; }
+  });
+  document.getElementById('sm-answered').textContent = ans;
+  document.getElementById('sm-notanswered').textContent = notans;
+  document.getElementById('sm-marked').textContent = mk;
+  document.getElementById('sm-notvisited').textContent = nv;
+}
+
+function enterQuestion(idx){
+  visited[idx] = true;
+  questionEnteredAt = Date.now();
+  current = idx;
+  const item = QUESTIONS[idx];
+
+  document.getElementById('ex-progress').textContent = `Question ${idx+1} of ${TOTAL_Q}`;
+  document.getElementById('q-num').textContent = `Question ${idx+1}`;
+  document.getElementById('q-cat').textContent = CAT_LABELS[item.cat] || item.cat;
+  document.getElementById('q-text').textContent = `${idx+1}. ${item.q}`;
+  document.getElementById('q-mark').checked = marked[idx];
+
+  const optWrap = document.getElementById('q-options');
+  optWrap.innerHTML = "";
+  const letters = ['A','B','C','D'];
+  item.opts.forEach((optText, oi)=>{
+    const row = document.createElement('label');
+    row.className = 'opt bn' + (responses[idx] === oi ? ' selected' : '');
+    row.innerHTML = `<input type="radio" name="opt" ${responses[idx]===oi?'checked':''}>
+                      <span class="tag">${letters[oi]}.</span><span>${optText}</span>`;
+    row.querySelector('input').addEventListener('change', ()=>{
+      responses[idx] = oi;
+      [...optWrap.children].forEach(c=>c.classList.remove('selected'));
+      row.classList.add('selected');
+      refreshPalette();
+    });
+    optWrap.appendChild(row);
+  });
+
+  refreshPalette();
+}
+
+function logTimeForCurrent(){
+  if(questionEnteredAt !== null){
+    timeSpentPerQ[current] += (Date.now() - questionEnteredAt);
+    questionEnteredAt = null;
+  }
+}
+
+function goTo(idx){
+  logTimeForCurrent();
+  enterQuestion(idx);
+}
+
+document.getElementById('btnPrev').addEventListener('click', ()=>{
+  if(current > 0) goTo(current-1);
+});
+document.getElementById('btnSaveNext').addEventListener('click', ()=>{
+  if(current < TOTAL_Q-1) goTo(current+1);
+  else { logTimeForCurrent(); refreshPalette(); }
+});
+document.getElementById('btnClear').addEventListener('click', ()=>{
+  responses[current] = null;
+  enterQuestion(current);
+});
+document.getElementById('q-mark').addEventListener('change', (e)=>{
+  marked[current] = e.target.checked;
+  refreshPalette();
+});
+document.getElementById('btnSubmitExam').addEventListener('click', ()=>{
+  const unanswered = responses.filter(r=>r===null).length;
+  const msg = unanswered > 0
+    ? `আপনি এখনও ${unanswered}টি প্রশ্নের উত্তর দেননি। আপনি কি নিশ্চিতভাবে পরীক্ষা জমা দিতে চান?`
+    : "আপনি কি পরীক্ষাটি জমা দিতে নিশ্চিত?";
+  if(confirm(msg)){
+    clearInterval(timerId);
+    finishExam();
+  }
+});
+
+/* =========================================================
+   SCORING + RESULT SCREEN
+========================================================= */
+function finishExam(){
+  logTimeForCurrent();
+  examEndedAt = Date.now();
+  show('screen-result');
+  renderResult();
+}
+
+function renderResult(){
+  let correct=0, wrong=0, skip=0;
+  const catStats = {}; // cat -> {correct, wrong, skip, total, time}
+  QUESTIONS.forEach((item, i)=>{
+    if(!catStats[item.cat]) catStats[item.cat] = {correct:0, wrong:0, skip:0, total:0, time:0};
+    catStats[item.cat].total++;
+    catStats[item.cat].time += timeSpentPerQ[i];
+    if(responses[i] === null){ skip++; catStats[item.cat].skip++; }
+    else if(responses[i] === item.ans){ correct++; catStats[item.cat].correct++; }
+    else { wrong++; catStats[item.cat].wrong++; }
+  });
+
+  const netScore = (correct*1 - wrong*0.25);
+  const totalMs = (examEndedAt - examStartedAt);
+
+  document.getElementById('res-name').textContent = candidate.name;
+  document.getElementById('res-desig').textContent = candidate.desig;
+  document.getElementById('res-roll').textContent = candidate.roll;
+  document.getElementById('res-score').textContent = `${netScore.toFixed(2)}/${TOTAL_Q}`;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-skip').textContent = skip;
+  document.getElementById('res-time').textContent = fmtClockFromMs(totalMs);
+
+  const pct = Math.round((correct/TOTAL_Q)*100);
+  document.getElementById('res-title').textContent =
+    pct >= 80 ? "Excellent Performance!" :
+    pct >= 55 ? "Good Attempt — Room to Grow" :
+    "Result Summary — Focus Areas Identified";
+
+  // ---- Category breakdown ----
+  const catBox = document.getElementById('catBreakdown');
+  catBox.innerHTML = "";
+  const catOrder = Object.keys(catStats).sort((a,b)=> catStats[a].total===catStats[b].total ? 0 : 0);
+  catOrder.forEach(cat=>{
+    const s = catStats[cat];
+    const acc = s.total ? Math.round((s.correct/s.total)*100) : 0;
+    const barClass = acc>=70 ? '' : acc>=40 ? 'mid' : 'low';
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="head">
+        <b>${CAT_LABELS[cat]||cat}</b>
+        <span class="stat">${s.correct}/${s.total} correct · ${acc}%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill ${barClass}" style="width:${acc}%"></div></div>
+    `;
+    catBox.appendChild(row);
+  });
+
+  // ---- Advice ----
+  const adviceBox = document.getElementById('adviceList');
+  adviceBox.innerHTML = "";
+
+  const withAcc = catOrder.map(cat=>{
+    const s = catStats[cat];
+    return { cat, acc: s.total? s.correct/s.total : 0, avgTime: s.total? s.time/s.total : 0, ...s };
+  });
+  const weakSorted = [...withAcc].sort((a,b)=> a.acc-b.acc);
+  const overallAvgTime = withAcc.reduce((a,c)=>a+c.time,0) / Math.max(withAcc.reduce((a,c)=>a+c.total,0),1);
+
+  let adviceCount = 0;
+  weakSorted.forEach(w=>{
+    if(w.acc >= 0.8 || adviceCount >= 3) return; // only flag genuinely weak areas, top 3
+    adviceCount++;
+    const label = CAT_LABELS[w.cat]||w.cat;
+    const accPct = Math.round(w.acc*100);
+    const slow = w.avgTime > overallAvgTime * 1.2;
+    const fast = w.avgTime < overallAvgTime * 0.6;
+    let reason;
+    if(w.skip > 0 && w.wrong >= w.correct){
+      reason = `আপনি এই বিভাগের ${w.skip} টি প্রশ্ন এড়িয়ে গেছেন এবং যা উত্তর দিয়েছেন তার অধিকাংশই ভুল হয়েছে। এটি নির্দেশ করে যে এই বিষয়ে মৌলিক ধারণা এখনও দুর্বল — প্রথমে বেসিক টপিক রিভাইজ করুন, তারপর প্র্যাকটিস প্রশ্ন করুন।`;
+    } else if(slow){
+      reason = `এই বিভাগে আপনি গড়ের তুলনায় বেশি সময় নিয়েছেন, তবুও নির্ভুলতা কম (${accPct}%)। এটি দেখাচ্ছে আপনি ভাবছেন ঠিকই, কিন্তু কনসেপ্ট স্পষ্ট নয় — শুধু বেশি সময় দিলে হবে না, নোট তৈরি করে concept ঝালিয়ে নিন।`;
+    } else if(fast){
+      reason = `এই বিভাগে আপনি খুব দ্রুত উত্তর দিয়েছেন কিন্তু ভুল হয়েছে (${accPct}% সঠিক) — সম্ভবত প্রশ্ন ভালোভাবে না পড়েই উত্তর করেছেন। উত্তর দেওয়ার আগে প্রতিটি অপশন মন দিয়ে পড়ার অভ্যাস করুন।`;
+    } else {
+      reason = `এই বিভাগে নির্ভুলতা মাত্র ${accPct}%, যা আপনার সামগ্রিক গড়ের তুলনায় কম। নিয়মিত ছোট ছোট কুইজ দিয়ে এই বিষয়ে অনুশীলন বাড়ানো দরকার।`;
+    }
+    const div = document.createElement('div');
+    div.className = 'advice-item';
+    div.innerHTML = `<h4>Focus: ${label} — ${accPct}% accuracy</h4><p class="bn">${reason}</p>`;
+    adviceBox.appendChild(div);
+  });
+
+  if(adviceCount === 0){
+    const strongest = [...withAcc].sort((a,b)=>b.acc-a.acc)[0];
+    const div = document.createElement('div');
+    div.className = 'advice-item strong';
+    div.innerHTML = `<h4>Strong all-round performance</h4>
+      <p class="bn">প্রতিটি বিভাগেই আপনার নির্ভুলতা সন্তোষজনক। ${strongest? (CAT_LABELS[strongest.cat]||strongest.cat)+' বিভাগে আপনি সবচেয়ে ভালো করেছেন।' : ''} এখন সময়ের উপর কাজ করুন — প্রতিটি প্রশ্নে গড়ে কম সময়ে নির্ভুল উত্তর দেওয়ার লক্ষ্যে অনুশীলন চালিয়ে যান।</p>`;
+    adviceBox.appendChild(div);
+  } else {
+    // add one time-management note if applicable
+    const totalUsedPct = (totalMs/1000)/EXAM_SECONDS;
+    if(totalUsedPct > 0.95 && skip>0){
+      const div = document.createElement('div');
+      div.className='advice-item';
+      div.innerHTML = `<h4>Time management</h4><p class="bn">আপনি প্রায় পুরো সময় ব্যবহার করেছেন এবং তারপরও ${skip}টি প্রশ্ন অনুত্তরিত রয়ে গেছে। প্রথম রাউন্ডে সহজ প্রশ্নগুলো আগে সমাধান করে কঠিন প্রশ্নের জন্য শেষে সময় রাখার কৌশল অনুশীলন করুন।</p>`;
+      adviceBox.appendChild(div);
+    }
+  }
+
+  // ---- Detailed review ----
+  const reviewBox = document.getElementById('reviewList');
+  reviewBox.innerHTML = "";
+  const letters = ['A','B','C','D'];
+  QUESTIONS.forEach((item, i)=>{
+    const userIdx = responses[i];
+    const status = userIdx===null ? 'skip' : (userIdx===item.ans ? 'correct' : 'wrong');
+    const statusLabel = status==='skip' ? 'Not Attempted' : status==='correct' ? 'Correct' : 'Incorrect';
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    let optsHtml = '';
+    item.opts.forEach((o, oi)=>{
+      let cls = '';
+      if(oi === item.ans) cls = 'correct';
+      else if(oi === userIdx) cls = 'wrong';
+      if(cls){
+        optsHtml += `<div class="ropt ${cls} bn">${letters[oi]}. ${o} ${oi===item.ans?'(Correct answer)':'(Your answer)'}</div>`;
+      }
+    });
+    if(status==='skip'){
+      optsHtml += `<div class="ropt skip bn">${letters[item.ans]}. ${item.opts[item.ans]} (Correct answer)</div>`;
+    }
+    div.innerHTML = `<div class="rq bn">${i+1}. ${item.q} <span class="badge-status ${status}">${statusLabel}</span></div>${optsHtml}`;
+    reviewBox.appendChild(div);
+  });
+}
+
+document.getElementById('btnToggleReview').addEventListener('click', function(){
+  const list = document.getElementById('reviewList');
+  const showing = list.classList.toggle('show');
+  this.textContent = showing ? "Hide Detailed Answer Review ▴" : "View Detailed Answer Review ▾";
+});
+
+document.getElementById('btnRetake').addEventListener('click', ()=>{
+  responses = new Array(TOTAL_Q).fill(null);
+  visited   = new Array(TOTAL_Q).fill(false);
+  marked    = new Array(TOTAL_Q).fill(false);
+  timeSpentPerQ = new Array(TOTAL_Q).fill(0);
+  current = 0;
+  secondsLeft = EXAM_SECONDS;
+  candidate.roll = genRoll();
+  document.getElementById('rollNo').textContent = candidate.roll;
+  inpName.value = ""; inpDesigSelect.value = ""; inpDesigOther.value = "";
+  desigOtherWrap.classList.add('hidden');
+  document.getElementById('chkDeclare').checked = false;
+  document.getElementById('btnStartExam').disabled = true;
+  document.getElementById('reviewList').classList.remove('show');
+  document.getElementById('btnToggleReview').textContent = "View Detailed Answer Review ▾";
+  validateLogin();
+  show('screen-login');
+});
+
+/* =========================================================
+   SCREEN SWITCH
+========================================================= */
+function show(id){
+  ['screen-login','screen-instructions','screen-exam','screen-result'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden', s!==id);
+  });
+  window.scrollTo({top:0, behavior:'instant'});
+}
+</script>
+</body>
+</html>
