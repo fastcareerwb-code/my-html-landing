@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calud.Ai Typing Examination Portal</title>
+<style>
+  :root{
+    --navy:#0b2e59;
+    --navy-dark:#071f3d;
+    --gold:#c9a227;
+    --red:#a4161a;
+    --paper:#f5f4f0;
+    --ink:#1b1f27;
+    --line:#c9cdd6;
+    --green:#1f6f3f;
+    --grey:#5b6472;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Segoe UI","Noto Sans",Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+  }
+  ::selection{background:var(--gold);color:var(--navy-dark);}
+
+  /* ============ HEADER ============ */
+  header.gov-header{
+    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-dark) 100%);
+    color:#fff;
+    border-bottom:4px solid var(--gold);
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+    position:sticky;top:0;z-index:50;
+  }
+  .header-inner{
+    max-width:1200px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 24px;gap:16px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-emblem{
+    width:46px;height:46px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #f6e3a1, var(--gold) 70%);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:var(--navy-dark);font-size:18px;
+    border:2px solid #fff3d0;
+    flex-shrink:0;
+  }
+  .brand-text h1{
+    font-size:19px;margin:0;letter-spacing:.3px;font-weight:600;
+  }
+  .brand-text p{
+    margin:2px 0 0;font-size:11.5px;color:#cfd8e8;letter-spacing:.4px;
+  }
+  .candidate-strip{
+    display:flex;gap:22px;align-items:center;flex-wrap:wrap;
+    font-size:13px;
+  }
+  .candidate-strip .field-label{color:#a9b6cc;font-size:10.5px;display:block;}
+  .candidate-strip .field-value{font-weight:600;font-size:14px;}
+  .timer-box{
+    background:var(--navy-dark);
+    border:1px solid #24406e;
+    border-radius:6px;
+    padding:6px 16px;
+    text-align:center;
+    min-width:118px;
+  }
+  .timer-box .field-label{color:#a9b6cc;font-size:10px;letter-spacing:.5px;}
+  .timer-box .timer-value{
+    font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;
+    font-family:"Consolas",monospace;
+  }
+  .timer-box.warning .timer-value{color:#ffb020;}
+  .timer-box.danger{
+    background:#3d0d0f;border-color:var(--red);
+    animation:pulse 1s infinite;
+  }
+  .timer-box.danger .timer-value{color:#ff6b6f;}
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(164,22,26,.5);}
+    50%{box-shadow:0 0 0 6px rgba(164,22,26,0);}
+  }
+
+  /* ============ LAYOUT ============ */
+  main{max-width:1200px;margin:0 auto;padding:26px 24px 60px;}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  /* ============ REGISTRATION ============ */
+  .reg-wrap{max-width:760px;margin:0 auto;}
+  .reg-banner{
+    background:#eef2f8;border:1px solid #d3ddec;border-left:5px solid var(--navy);
+    padding:14px 18px;border-radius:6px;margin-bottom:22px;font-size:13.5px;color:#25324a;
+  }
+  .card-header{
+    background:var(--navy);color:#fff;padding:14px 22px;border-radius:8px 8px 0 0;
+    font-size:15px;font-weight:600;letter-spacing:.2px;
+  }
+  .card-body{padding:26px;}
+  .form-row{margin-bottom:18px;}
+  .form-row label{
+    display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#2a3244;
+  }
+  .form-row label .req{color:var(--red);}
+  .form-row input[type=text]{
+    width:100%;padding:11px 13px;font-size:14.5px;
+    border:1px solid #b6c0d1;border-radius:5px;background:#fbfcfe;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .form-row input[type=text]:focus{
+    outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(11,46,89,.12);
+  }
+  .form-error{color:var(--red);font-size:12px;margin-top:5px;display:none;}
+
+  .instructions-box{
+    background:#fbf8ee;border:1px solid #e6dcb8;border-radius:6px;
+    padding:16px 20px;margin:20px 0;
+  }
+  .instructions-box h3{margin:0 0 10px;font-size:14px;color:#6b5715;}
+  .instructions-box ul{margin:0;padding-left:20px;font-size:13px;line-height:1.7;color:#4a4326;}
+
+  .declaration{display:flex;gap:10px;align-items:flex-start;margin:18px 0 6px;font-size:13px;}
+  .declaration input{margin-top:3px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 26px;font-size:14.5px;font-weight:600;
+    border-radius:5px;border:none;cursor:pointer;letter-spacing:.2px;
+    transition:transform .05s, box-shadow .15s, background .15s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-dark);}
+  .btn-primary:disabled{background:#9aa6ba;cursor:not-allowed;}
+  .btn-danger{background:var(--red);color:#fff;}
+  .btn-danger:hover{background:#7f1114;}
+  .btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--navy);}
+  .btn-outline:hover{background:#eef2f8;}
+  .btn-block{width:100%;}
+
+  /* ============ EXAM SCREEN ============ */
+  .exam-topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:16px;flex-wrap:wrap;gap:10px;
+  }
+  .exam-meta{font-size:13px;color:var(--grey);}
+  .exam-meta b{color:var(--ink);}
+  .progress-pill{
+    background:#eef2f8;border:1px solid #d3ddec;border-radius:20px;
+    padding:6px 14px;font-size:12.5px;color:var(--navy);font-weight:600;
+  }
+
+  .passage-card{margin-bottom:18px;}
+  .passage-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 20px;border-bottom:1px solid var(--line);background:#f8f9fb;
+    border-radius:8px 8px 0 0;
+  }
+  .passage-header h3{margin:0;font-size:13.5px;color:#2a3244;letter-spacing:.2px;}
+  .passage-text{
+    padding:20px 24px;font-size:15.5px;line-height:1.85;
+    font-family:Georgia,"Times New Roman",serif;color:#232a38;
+    max-height:230px;overflow-y:auto;user-select:none;
+    background:repeating-linear-gradient(#ffffff,#ffffff 100%);
+  }
+  .passage-text::selection{background:transparent;}
+
+  .typing-card .card-header{display:flex;justify-content:space-between;align-items:center;}
+  textarea#typingArea{
+    width:100%;min-height:230px;padding:20px 24px;font-size:15.5px;line-height:1.85;
+    border:none;border-radius:0 0 8px 8px;resize:vertical;
+    font-family:Georgia,"Times New Roman",serif;color:#1b1f27;
+  }
+  textarea#typingArea:focus{outline:2px solid var(--navy);outline-offset:-2px;}
+  textarea#typingArea:disabled{background:#f2f3f5;color:#8a93a3;}
+
+  .metrics-bar{
+    display:flex;gap:14px;flex-wrap:wrap;margin:16px 0;
+  }
+  .metric-chip{
+    flex:1;min-width:120px;background:#fff;border:1px solid var(--line);
+    border-radius:7px;padding:12px 16px;text-align:center;
+  }
+  .metric-chip .m-label{font-size:11px;color:var(--grey);letter-spacing:.3px;text-transform:uppercase;}
+  .metric-chip .m-value{font-size:22px;font-weight:700;color:var(--navy);margin-top:2px;}
+
+  .exam-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:18px;}
+
+  /* ============ MODAL ============ */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(10,16,30,.55);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal-box{
+    background:#fff;border-radius:8px;max-width:420px;width:100%;
+    padding:26px 28px;box-shadow:0 10px 40px rgba(0,0,0,.3);
+    border-top:5px solid var(--navy);
+  }
+  .modal-box h3{margin:0 0 12px;font-size:17px;color:var(--navy-dark);}
+  .modal-box p{font-size:13.5px;color:#3a4152;line-height:1.6;margin:0 0 20px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;}
+
+  /* ============ RESULTS ============ */
+  .result-header{
+    text-align:center;padding:30px 20px 10px;
+  }
+  .result-header .seal{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 12px;
+    background:radial-gradient(circle at 35% 30%, #f6e3a1, var(--gold) 70%);
+    border:3px solid #fff3d0;display:flex;align-items:center;justify-content:center;
+    font-size:26px;color:var(--navy-dark);font-weight:700;
+  }
+  .result-header h2{margin:0;color:var(--navy-dark);font-size:21px;}
+  .result-header p{margin:6px 0 0;color:var(--grey);font-size:13px;}
+
+  .scorecard{padding:10px 30px 30px;}
+  .scorecard-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0 26px;
+  }
+  @media(max-width:700px){.scorecard-grid{grid-template-columns:repeat(2,1fr);}}
+  .score-tile{
+    background:#f8f9fb;border:1px solid var(--line);border-radius:8px;
+    padding:18px 12px;text-align:center;
+  }
+  .score-tile .s-label{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.4px;}
+  .score-tile .s-value{font-size:28px;font-weight:700;color:var(--navy);margin-top:4px;}
+  .score-tile.accent .s-value{color:var(--green);}
+  .score-tile.warn .s-value{color:var(--red);}
+
+  table.candidate-table{width:100%;border-collapse:collapse;margin-bottom:22px;font-size:13.5px;}
+  table.candidate-table td{padding:9px 4px;border-bottom:1px solid #eceff3;}
+  table.candidate-table td.k{color:var(--grey);width:180px;}
+  table.candidate-table td.v{font-weight:600;color:var(--ink);}
+
+  .status-banner{
+    padding:10px 16px;border-radius:6px;font-size:13px;margin-bottom:18px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .status-banner.ok{background:#e9f6ee;color:var(--green);border:1px solid #bfe6cc;}
+  .status-banner.err{background:#fdecec;color:var(--red);border:1px solid #f3c2c3;}
+  .status-banner.pending{background:#eef2f8;color:var(--navy);border:1px solid #d3ddec;}
+
+  footer.gov-footer{
+    text-align:center;padding:18px;font-size:11.5px;color:#8a93a3;
+    border-top:1px solid var(--line);margin-top:30px;
+  }
+
+  @media(max-width:640px){
+    .header-inner{flex-direction:column;align-items:flex-start;}
+    .candidate-strip{width:100%;justify-content:space-between;}
+  }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<header class="gov-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-emblem">CA</div>
+      <div class="brand-text">
+        <h1>Calud.Ai Typing Examination Portal</h1>
+        <p>GOVERNMENT-STYLE ONLINE TYPING SKILL TEST &mdash; OFFICIAL EXAMINATION SYSTEM</p>
+      </div>
+    </div>
+    <div class="candidate-strip" id="headerCandidateInfo" style="display:none;">
+      <div>
+        <span class="field-label">CANDIDATE ID</span>
+        <span class="field-value" id="hdrCandId">-</span>
+      </div>
+      <div>
+        <span class="field-label">CANDIDATE NAME</span>
+        <span class="field-value" id="hdrCandName">-</span>
+      </div>
+      <div class="timer-box" id="timerBox">
+        <span class="field-label">TIME REMAINING</span>
+        <div class="timer-value" id="timerDisplay">15:00</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== SCREEN 1: REGISTRATION ===================== -->
+  <section id="screen-register" class="screen active">
+    <div class="reg-wrap">
+      <div class="reg-banner">
+        This is a simulated online examination environment. Please ensure a stable internet connection
+        and refrain from refreshing or closing this browser tab once the examination has commenced.
+      </div>
+
+      <div class="card">
+        <div class="card-header">Candidate Registration</div>
+        <div class="card-body">
+          <form id="regForm" novalidate>
+            <div class="form-row">
+              <label for="studentId">Student / Roll ID <span class="req">*</span></label>
+              <input type="text" id="studentId" autocomplete="off" placeholder="e.g. CA2026-00123" maxlength="30">
+              <div class="form-error" id="err-studentId">Please enter a valid Student ID.</div>
+            </div>
+            <div class="form-row">
+              <label for="fullName">Full Name (as per records) <span class="req">*</span></label>
+              <input type="text" id="fullName" autocomplete="off" placeholder="e.g. Ananya Sharma" maxlength="60">
+              <div class="form-error" id="err-fullName">Please enter your full name.</div>
+            </div>
+
+            <div class="instructions-box">
+              <h3>General Instructions</h3>
+              <ul>
+                <li>The examination duration is <b>15 minutes</b> and will start immediately after you click "Start Examination".</li>
+                <li>Do not refresh, reload, or close the browser tab during the test. Doing so may forfeit your attempt.</li>
+                <li>Copy-pasting into the typing area is disabled. You must type the passage manually.</li>
+                <li>Right-click and text selection on the reference passage are disabled to ensure test integrity.</li>
+                <li>The system will <b>auto-submit</b> your test the moment the timer reaches 00:00.</li>
+                <li>You may submit manually before time expires using the "Final Submit" button.</li>
+                <li>Your Words Per Minute (WPM), Accuracy and Errors will be calculated and displayed instantly after submission.</li>
+                <li>Ensure you are in a quiet, distraction-free environment before proceeding.</li>
+              </ul>
+            </div>
+
+            <label class="declaration">
+              <input type="checkbox" id="declareCheck">
+              <span>I have read and understood the instructions above, and I agree to abide by the examination rules and conduct guidelines.</span>
+            </label>
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;">Start Examination &rarr;</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 2: EXAM ===================== -->
+  <section id="screen-exam" class="screen">
+    <div class="exam-topbar">
+      <div class="exam-meta">Examination: <b>Typing Skill Test</b> &nbsp;|&nbsp; Duration: <b>15:00 Minutes</b> &nbsp;|&nbsp; Passage Language: <b>English</b></div>
+      <div class="progress-pill" id="progressPill">0 / 0 words typed</div>
+    </div>
+
+    <div class="card passage-card">
+      <div class="passage-header">
+        <h3>REFERENCE PASSAGE &mdash; TYPE EXACTLY AS SHOWN</h3>
+        <span style="font-size:11px;color:var(--grey);">Selection disabled</span>
+      </div>
+      <div class="passage-text" id="passageText" onselectstart="return false;"></div>
+    </div>
+
+    <div class="card typing-card">
+      <div class="card-header">
+        <span>Your Typing Area</span>
+        <span style="font-weight:400;font-size:12px;opacity:.85;">Paste disabled</span>
+      </div>
+      <textarea id="typingArea" placeholder="Click here and begin typing the passage above..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+    </div>
+
+    <div class="metrics-bar">
+      <div class="metric-chip"><div class="m-label">Elapsed Time</div><div class="m-value" id="metricElapsed">00:00</div></div>
+      <div class="metric-chip"><div class="m-label">Words Typed</div><div class="m-value" id="metricWords">0</div></div>
+      <div class="metric-chip"><div class="m-label">Live Gross WPM</div><div class="m-value" id="metricWpm">0</div></div>
+      <div class="metric-chip"><div class="m-label">Characters Typed</div><div class="m-value" id="metricChars">0</div></div>
+    </div>
+
+    <div class="exam-actions">
+      <button class="btn btn-danger" id="btnFinalSubmit">Final Submit</button>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 3: RESULTS ===================== -->
+  <section id="screen-results" class="screen">
+    <div class="card">
+      <div class="result-header">
+        <div class="seal">✓</div>
+        <h2>Examination Completed</h2>
+        <p>Your typing test has been evaluated. Please find your scorecard below.</p>
+      </div>
+      <div class="scorecard">
+        <div id="submitStatusBanner" class="status-banner pending">Submitting your result to the official server...</div>
+
+        <table class="candidate-table">
+          <tr><td class="k">Candidate Name</td><td class="v" id="resName">-</td></tr>
+          <tr><td class="k">Student / Roll ID</td><td class="v" id="resId">-</td></tr>
+          <tr><td class="k">Date &amp; Time of Submission</td><td class="v" id="resDateTime">-</td></tr>
+          <tr><td class="k">Time Taken</td><td class="v" id="resTimeTaken">-</td></tr>
+        </table>
+
+        <div class="scorecard-grid">
+          <div class="score-tile accent"><div class="s-label">Net WPM</div><div class="s-value" id="resNetWpm">0</div></div>
+          <div class="score-tile"><div class="s-label">Gross WPM</div><div class="s-value" id="resGrossWpm">0</div></div>
+          <div class="score-tile accent"><div class="s-label">Accuracy</div><div class="s-value" id="resAccuracy">0%</div></div>
+          <div class="score-tile warn"><div class="s-label">Total Errors</div><div class="s-value" id="resErrors">0</div></div>
+        </div>
+
+        <table class="candidate-table">
+          <tr><td class="k">Total Words Typed</td><td class="v" id="resTotalWords">-</td></tr>
+          <tr><td class="k">Correct Words</td><td class="v" id="resCorrectWords">-</td></tr>
+          <tr><td class="k">Total Characters Typed</td><td class="v" id="resTotalChars">-</td></tr>
+        </table>
+
+        <div class="exam-actions" style="justify-content:center;">
+          <button class="btn btn-outline" onclick="window.print()">Print Scorecard</button>
+          <button class="btn btn-primary" id="btnRestart">Take Another Attempt</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="gov-footer">
+  &copy; 2026 Calud.Ai Typing Examination Portal. All rights reserved. This is a demonstration examination system.
+</footer>
+
+<!-- ===================== SUBMIT CONFIRMATION MODAL ===================== -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3>Confirm Final Submission</h3>
+    <p>Once submitted, you will not be able to make further changes to your typed answer. Do you wish to proceed with final submission?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="btnCancelSubmit">Cancel</button>
+      <button class="btn btn-danger" id="btnConfirmSubmit">Yes, Submit Final</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   CALUD.AI TYPING EXAMINATION PORTAL — FRONTEND LOGIC
+   ====================================================================== */
+
+// ----- CONFIGURATION -----
+const EXAM_DURATION_SECONDS = 15 * 60; // 15 minutes
+// Paste your deployed Google Apps Script Web App URL below:
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykNMK-S-3-Vb3QI-unndLcKkZ1kLKmdAa58Jk48_IQdxyU17bLZLPu3uRw9-D1LEwjXQ/exec
+";
+
+const REFERENCE_PASSAGE = `Digital India represents one of the most ambitious governance transformation programmes launched in recent times, envisioned as a comprehensive initiative to convert the nation into a digitally empowered society and a knowledge-based economy. At its core, the programme rests upon three fundamental pillars: the creation of robust digital infrastructure as a core utility available to every citizen, the delivery of governance and public services on demand through electronic means, and the digital empowerment of citizens through widespread literacy and universal access to information. These pillars are not isolated initiatives but interconnected strategies designed to work in harmony, ensuring that the benefits of technology reach every corner of the country, from bustling metropolitan cities to the most remote rural villages.
+
+The expansion of digital infrastructure has been central to this vision. High-speed broadband connectivity has been extended to thousands of gram panchayats under various national broadband missions, enabling citizens in rural areas to access government services, educational resources, and financial systems without having to travel long distances to urban centres. Alongside physical infrastructure, the proliferation of affordable smartphones and inexpensive mobile data plans has played an equally significant role in bridging the digital divide. As a result, millions of first-time internet users have come online in the past decade, many of them accessing banking, healthcare, and educational services directly from their mobile devices for the first time in their lives.
+
+Governance on demand has manifested through numerous electronic service delivery platforms that allow citizens to obtain certificates, pay utility bills, file grievances, and track the status of applications without visiting a government office in person. This shift has substantially reduced instances of corruption and unnecessary delay, since many processes that once required repeated visits and informal payments can now be completed transparently within a fixed number of working days. Furthermore, the integration of unique digital identity systems with welfare schemes has ensured that subsidies and benefits reach intended beneficiaries directly, minimising leakages that previously diverted public funds away from those who needed them most.
+
+Digital empowerment, the third pillar, focuses on building the skills and confidence necessary for citizens to participate meaningfully in a digital economy. Various digital literacy missions have trained lakhs of individuals in rural and semi-urban areas on basic computer operations, safe internet usage, and digital financial transactions. Educational institutions have also embraced online learning platforms, particularly following the disruptions caused by the global pandemic, which demonstrated both the potential and the limitations of remote education when internet access remains uneven across different regions and socioeconomic groups.
+
+Despite these considerable achievements, challenges remain that must be addressed for the vision of an inclusive digital society to be fully realised. Cybersecurity threats have grown in sophistication, and safeguarding citizen data has become an urgent priority for policymakers and technology administrators alike. Concerns about privacy, consent, and the responsible use of personal information continue to generate important public discourse. Additionally, the digital divide between urban and rural areas, and between different economic classes, has not been entirely eliminated, meaning that a section of the population still struggles to access the full range of benefits that digital governance promises.
+
+Looking ahead, the continued success of this transformation will depend on sustained investment in infrastructure, the strengthening of cybersecurity frameworks, and a renewed emphasis on inclusive design that accounts for linguistic diversity, disability access, and varying levels of digital literacy. Public and private sector collaboration will remain essential, as will international cooperation on matters of technology standards and data governance. Ultimately, the goal is not merely technological modernisation for its own sake, but the creation of a governance ecosystem that is efficient, transparent, accountable, and genuinely responsive to the needs of every citizen, regardless of geography or economic status. When implemented with careful attention to these principles, digital governance has the potential to redefine the relationship between the state and its citizens, fostering trust, participation, and shared prosperity for generations to come.`;
+
+// ----- STATE -----
+let candidate = { id: "", name: "" };
+let timerInterval = null;
+let secondsRemaining = EXAM_DURATION_SECONDS;
+let examStartTime = null;
+let examEnded = false;
+
+// ----- DOM SHORTCUTS -----
+const $ = (id) => document.getElementById(id);
+
+// ----- SCREEN NAVIGATION -----
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+// ============================================================
+// STEP A: REGISTRATION
+// ============================================================
+$("regForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const idVal = $("studentId").value.trim();
+  const nameVal = $("fullName").value.trim();
+  let valid = true;
+
+  $("err-studentId").style.display = "none";
+  $("err-fullName").style.display = "none";
+
+  if (!idVal) {
+    $("err-studentId").style.display = "block";
+    valid = false;
+  }
+  if (!nameVal || nameVal.length < 2) {
+    $("err-fullName").style.display = "block";
+    valid = false;
+  }
+  if (!$("declareCheck").checked) {
+    alert("Please accept the declaration checkbox before proceeding.");
+    valid = false;
+  }
+  if (!valid) return;
+
+  candidate.id = idVal;
+  candidate.name = nameVal;
+
+  $("hdrCandId").textContent = candidate.id;
+  $("hdrCandName").textContent = candidate.name;
+  $("headerCandidateInfo").style.display = "flex";
+
+  $("resName").textContent = candidate.name;
+  $("resId").textContent = candidate.id;
+
+  startExam();
+});
+
+// ============================================================
+// STEP B: EXAM SCREEN
+// ============================================================
+function startExam() {
+  $("passageText").textContent = REFERENCE_PASSAGE;
+  showScreen("screen-exam");
+
+  secondsRemaining = EXAM_DURATION_SECONDS;
+  examStartTime = Date.now();
+  examEnded = false;
+
+  updateTimerDisplay();
+  timerInterval = setInterval(tickTimer, 1000);
+
+  $("typingArea").disabled = false;
+  $("typingArea").value = "";
+  $("typingArea").focus();
+  updateLiveMetrics();
+}
+
+function tickTimer() {
+  secondsRemaining--;
+  updateTimerDisplay();
+
+  if (secondsRemaining <= 0) {
+    clearInterval(timerInterval);
+    secondsRemaining = 0;
+    updateTimerDisplay();
+    finishExam(true); // auto-submit
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsRemaining / 60).toString().padStart(2, "0");
+  const s = (secondsRemaining % 60).toString().padStart(2, "0");
+  $("timerDisplay").textContent = `${m}:${s}`;
+
+  const box = $("timerBox");
+  box.classList.remove("warning", "danger");
+  if (secondsRemaining <= 120 && secondsRemaining > 0) {
+    box.classList.add("danger");
+  } else if (secondsRemaining <= 300) {
+    box.classList.add("warning");
+  }
+
+  // also update elapsed metric
+  const elapsed = EXAM_DURATION_SECONDS - secondsRemaining;
+  const em = Math.floor(elapsed / 60).toString().padStart(2, "0");
+  const es = (elapsed % 60).toString().padStart(2, "0");
+  $("metricElapsed").textContent = `${em}:${es}`;
+}
+
+// ----- ANTI-CHEAT: disable paste / cut / context menu on typing area -----
+["paste", "cut", "copy", "drop"].forEach(evt => {
+  $("typingArea").addEventListener(evt, e => e.preventDefault());
+});
+$("passageText").addEventListener("copy", e => e.preventDefault());
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// disable selecting the passage text (already CSS user-select:none, backstop with JS)
+$("passageText").addEventListener("mousedown", e => e.preventDefault());
+
+// ----- LIVE METRICS -----
+$("typingArea").addEventListener("input", updateLiveMetrics);
+
+function updateLiveMetrics() {
+  const typed = $("typingArea").value;
+  const words = typed.trim().length ? typed.trim().split(/\s+/).length : 0;
+  const chars = typed.length;
+
+  $("metricWords").textContent = words;
+  $("metricChars").textContent = chars;
+  $("progressPill").textContent = `${words} / ${REFERENCE_PASSAGE.trim().split(/\s+/).length} words typed`;
+
+  const elapsedMinutes = Math.max((Date.now() - examStartTime) / 60000, 1 / 60);
+  const grossWpm = Math.round((chars / 5) / elapsedMinutes);
+  $("metricWpm").textContent = isFinite(grossWpm) ? grossWpm : 0;
+}
+
+// ----- FINAL SUBMIT (manual, with confirmation modal) -----
+$("btnFinalSubmit").addEventListener("click", () => {
+  $("confirmModal").classList.add("active");
+});
+$("btnCancelSubmit").addEventListener("click", () => {
+  $("confirmModal").classList.remove("active");
+});
+$("btnConfirmSubmit").addEventListener("click", () => {
+  $("confirmModal").classList.remove("active");
+  finishExam(false);
+});
+
+// prevent accidental page leave during exam
+window.addEventListener("beforeunload", function (e) {
+  if (!examEnded && examStartTime) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+
+// ============================================================
+// STEP C: SCORING + RESULTS
+// ============================================================
+function finishExam(autoSubmitted) {
+  if (examEnded) return;
+  examEnded = true;
+  clearInterval(timerInterval);
+  $("typingArea").disabled = true;
+
+  const typedText = $("typingArea").value;
+  const timeTakenSeconds = EXAM_DURATION_SECONDS - secondsRemaining;
+  const timeTakenMinutes = Math.max(timeTakenSeconds / 60, 1 / 60);
+
+  const result = calculateScore(REFERENCE_PASSAGE, typedText, timeTakenMinutes);
+
+  // Populate result screen
+  const now = new Date();
+  $("resDateTime").textContent = now.toLocaleString();
+  $("resTimeTaken").textContent = formatDuration(timeTakenSeconds) + (autoSubmitted ? " (Auto-submitted)" : "");
+  $("resNetWpm").textContent = result.netWpm;
+  $("resGrossWpm").textContent = result.grossWpm;
+  $("resAccuracy").textContent = result.accuracy + "%";
+  $("resErrors").textContent = result.errors;
+  $("resTotalWords").textContent = result.totalTypedWords;
+  $("resCorrectWords").textContent = result.correctWords;
+  $("resTotalChars").textContent = result.totalChars;
+
+  showScreen("screen-results");
+  submitResultToServer(result, now);
+}
+
+function formatDuration(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}m ${s}s`;
+}
+
+/**
+ * Calculates typing test scoring metrics.
+ * Gross WPM  = (Total characters typed / 5) / time in minutes
+ * Net WPM    = Gross WPM - (Errors / time in minutes)   [standard net WPM formula]
+ * Accuracy   = (Correct words / Total typed words) * 100
+ */
+function calculateScore(reference, typed, timeTakenMinutes) {
+  const refWords = reference.trim().split(/\s+/);
+  const typedWordsRaw = typed.trim().length ? typed.trim().split(/\s+/) : [];
+  const totalTypedWords = typedWordsRaw.length;
+  const totalChars = typed.length;
+
+  let correctWords = 0;
+  let errors = 0;
+  const maxLen = Math.max(refWords.length, typedWordsRaw.length);
+  for (let i = 0; i < maxLen; i++) {
+    const refWord = refWords[i];
+    const typedWord = typedWordsRaw[i];
+    if (typedWord === undefined) continue; // untyped remainder not counted as typed error
+    if (refWord !== undefined && typedWord === refWord) {
+      correctWords++;
+    } else {
+      errors++;
+    }
+  }
+
+  const grossWpm = Math.round((totalChars / 5) / timeTakenMinutes) || 0;
+  const netWpm = Math.max(Math.round(grossWpm - (errors / timeTakenMinutes)), 0);
+  const accuracy = totalTypedWords > 0
+    ? Math.round((correctWords / totalTypedWords) * 100)
+    : 0;
+
+  return {
+    grossWpm, netWpm, accuracy, errors,
+    totalTypedWords, correctWords, totalChars
+  };
+}
+
+// ----- GOOGLE SHEETS SUBMISSION -----
+function submitResultToServer(result, dateObj) {
+  const banner = $("submitStatusBanner");
+
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf("PASTE_YOUR") !== -1) {
+    banner.className = "status-banner err";
+    banner.textContent = "Server not configured: please set GOOGLE_SCRIPT_URL in index.html to enable Google Sheets submission.";
+    return;
+  }
+
+  const payload = {
+    studentId: candidate.id,
+    name: candidate.name,
+    wpm: result.netWpm,
+    accuracy: result.accuracy,
+    dateTime: dateObj.toISOString()
+  };
+
+  banner.className = "status-banner pending";
+  banner.textContent = "Submitting your result to the official server...";
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" }, // avoids CORS preflight for Apps Script
+    body: JSON.stringify(payload)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.status === "success") {
+        banner.className = "status-banner ok";
+        banner.textContent = "Your result has been successfully recorded in the official database.";
+      } else {
+        throw new Error((data && data.message) || "Unknown server response");
+      }
+    })
+    .catch(err => {
+      banner.className = "status-banner err";
+      banner.textContent = "Could not reach the server to record your result. (" + err.message + ")";
+    });
+}
+
+// ----- RESTART -----
+$("btnRestart").addEventListener("click", () => {
+  location.reload();
+});
+</script>
+</body>
+</html>
